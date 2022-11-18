@@ -35,6 +35,6 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            birdc
+            birdc c
             birdc s p
             
