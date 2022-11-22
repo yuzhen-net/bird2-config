@@ -14,6 +14,7 @@ jobs:
           - us-nyc
           - au-nsw
           - uk-lon
+          - cn-pek
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
