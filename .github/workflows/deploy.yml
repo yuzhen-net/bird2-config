@@ -37,9 +37,21 @@ jobs:
           ARGS: '-avz --delete'
           REMOTE_HOST: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PORT: ${{ 40127 if matrix.machine == 'cn-csx' else 22 }}
+          REMOTE_PORT: 40127
           SOURCE: bird/${{ matrix.machine }}/
           TARGET: /etc/bird/
+        if: ${{ matrix.machine == 'cn-csx' }}
+      - name: Upload config files to server
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: '-avz --delete'
+          REMOTE_HOST: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: 22
+          SOURCE: bird/${{ matrix.machine }}/
+          TARGET: /etc/bird/
+        if: ${{ matrix.machine != 'cn-csx' }}
       - name: Birdc configure
         uses: garygrossgarten/github-action-ssh@release
         with:
@@ -49,5 +61,17 @@ jobs:
           host: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
           username: ${{ secrets.REMOTE_USER }}
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ 40127 if matrix.machine == 'cn-csx' else 22 }}
+          port: 40127
+        if: ${{ matrix.machine == 'cn-csx' }}
+      - name: Birdc configure
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: |
+            birdc c
+            birdc s p
+          host: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
+          username: ${{ secrets.REMOTE_USER }}
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+        if: ${{ matrix.machine != 'cn-csx' }}
             
