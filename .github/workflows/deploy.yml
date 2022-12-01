@@ -37,6 +37,7 @@ jobs:
           ARGS: '-avz --delete'
           REMOTE_HOST: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ 40127 if matrix.machine == 'cn-csx' else 22 }}
           SOURCE: bird/${{ matrix.machine }}/
           TARGET: /etc/bird/
       - name: Birdc configure
@@ -48,4 +49,5 @@ jobs:
           host: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
           username: ${{ secrets.REMOTE_USER }}
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ 40127 if matrix.machine == 'cn-csx' else 22 }}
             
