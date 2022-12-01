@@ -16,6 +16,7 @@ jobs:
           - uk-lon
           - cn-pek
           - tw-kskb
+          - nl-ams
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
