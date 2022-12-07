@@ -17,6 +17,7 @@ jobs:
           - cn-pek
           - tw-kskb
           - nl-ams
+          - us-sea
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
