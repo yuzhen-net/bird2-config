@@ -48,5 +48,7 @@ jobs:
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
       - name: Leave ZeroTier
-        run: sudo zerotier-cli leave ${{ secrets.ZEROTIER_ID }}
+        run: |
+          curl -X DELETE -H "Authorization: token ${{ secrets.ZEROTIER_TOKEN }}" https://api.zerotier.com/api/v1/network/${{ secrets.ZEROTIER_ID }}/member/`zerotier-cli info | awk '{ print $3 }'`
+          sudo zerotier-cli leave ${{ secrets.ZEROTIER_ID }}
             
