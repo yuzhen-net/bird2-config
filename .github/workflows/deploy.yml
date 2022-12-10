@@ -49,6 +49,6 @@ jobs:
           port: 22
       - name: Leave ZeroTier
         run: |
-          curl -X DELETE -H "Authorization: token ${{ secrets.ZEROTIER_TOKEN }}" https://api.zerotier.com/api/v1/network/${{ secrets.ZEROTIER_ID }}/member/`zerotier-cli info | awk '{ print $3 }'`
+          curl -X DELETE -H "Authorization: token ${{ secrets.ZEROTIER_TOKEN }}" https://api.zerotier.com/api/v1/network/${{ secrets.ZEROTIER_ID }}/member/`sudo zerotier-cli info | awk '{ print $3 }'`
           sudo zerotier-cli leave ${{ secrets.ZEROTIER_ID }}
             
