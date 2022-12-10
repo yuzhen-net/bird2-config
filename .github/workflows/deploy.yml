@@ -12,23 +12,15 @@ jobs:
         machine:
           - hk-hkg
           - us-nyc
-          - au-nsw
-          - uk-lon
-          - cn-pek
           - tw-kskb
           - nl-ams
           - us-sea
+          - cn-csx
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Setup Cloudflare Warp
-        run: |
-          curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
-          sudo apt update
-          sudo apt install cloudflare-warp -y
-          warp-cli --accept-tos register
-          warp-cli --accept-tos enable-always-on
+      - name: Setup ZeroTier
+        run: curl -s https://install.zerotier.com | sudo bash && zerotier-cli join ${{ secrets.ZEROTIER_ID }}
       - name: Copy general configs
         run: python scripts/copy.py ${{ matrix.machine }}
       - name: Upload config files to server
@@ -36,43 +28,21 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: '-avz --delete'
-          REMOTE_HOST: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PORT: 40127
-          SOURCE: bird/${{ matrix.machine }}/
-          TARGET: /etc/bird/
-        if: ${{ matrix.machine == 'cn-csx' }}
-      - name: Upload config files to server
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: '-avz --delete'
-          REMOTE_HOST: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
+          REMOTE_HOST: ${{ format('v4.{0}.zt.as211390.cloud', matrix.machine) }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: 22
           SOURCE: bird/${{ matrix.machine }}/
           TARGET: /etc/bird/
-        if: ${{ matrix.machine != 'cn-csx' }}
       - name: Birdc configure
         uses: garygrossgarten/github-action-ssh@release
         with:
           command: |
             birdc c
             birdc s p
-          host: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
-          username: ${{ secrets.REMOTE_USER }}
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 40127
-        if: ${{ matrix.machine == 'cn-csx' }}
-      - name: Birdc configure
-        uses: garygrossgarten/github-action-ssh@release
-        with:
-          command: |
-            birdc c
-            birdc s p
-          host: ${{ format('{0}.nodes.yuzhen.network', matrix.machine) }}
+          host: ${{ format('v4.{0}.zt.as211390.cloud', matrix.machine) }}
           username: ${{ secrets.REMOTE_USER }}
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-        if: ${{ matrix.machine != 'cn-csx' }}
+      - name: Leave ZeroTier
+        run: zerotier-cli leave ${{ secrets.ZEROTIER_ID }}
             
