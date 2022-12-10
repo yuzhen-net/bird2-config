@@ -20,7 +20,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Setup ZeroTier
-        run: curl -s https://install.zerotier.com | sudo bash && zerotier-cli join ${{ secrets.ZEROTIER_ID }}
+        run: |
+          curl -s https://install.zerotier.com | sudo bash
+          zerotier-cli join ${{ secrets.ZEROTIER_ID }}
       - name: Copy general configs
         run: python scripts/copy.py ${{ matrix.machine }}
       - name: Upload config files to server
