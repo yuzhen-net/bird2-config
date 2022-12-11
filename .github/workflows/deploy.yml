@@ -16,6 +16,7 @@ jobs:
           - nl-ams
           - us-sea
           - cn-csx
+          - cn-hgh
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
