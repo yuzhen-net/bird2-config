@@ -23,6 +23,9 @@ jobs:
         run: |
           curl -s https://install.zerotier.com | sudo bash
           sudo zerotier-cli join ${{ secrets.ZEROTIER_ID }}
+          sleep 60
+          ping ${{ format('v4.{0}.zt.as211390.cloud', matrix.machine) }} -c 10
+          ping ${{ format('v6.{0}.zt.as211390.cloud', matrix.machine) }} -c 10
       - name: Copy general configs
         run: python scripts/copy.py ${{ matrix.machine }}
       - name: Upload config files to server
