@@ -17,6 +17,7 @@ jobs:
           - us-sea
           - cn-csx
           - cn-hgh
+          - de-fra
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
